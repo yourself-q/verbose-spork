@@ -1,62 +1,70 @@
 # ウェイクワード検出システム
 
-このリポジトリでは、ウェイクワード検出のためのデータ収集、前処理、特徴量抽出、モデル学習を行うスクリプトをまとめています。
+このリポジトリには、ウェイクワード検出のためのデータ収集、前処理、特徴抽出、モデル学習用のスクリプトが含まれています。
 
 ## 使用方法
 
-以下の手順でデータの収集からモデル学習までを行うことができます。
+以下の手順でデータ収集とモデルの学習ができます。
 
-### 1. Web UIの起動
+### 1. Web UI を起動する
 
 ```bash
 python app.py
 ```
-これで Web UI が起動し、ブラウザ上で音声をフォルダー単位で保存できます。
+Web UI が起動し、ブラウザ上のフォルダに音声を保存できます。
 
-#### データ収集のポイント
+#### データ収集時の注意点
 
-- ウェイクワードを含む音声を録音する際、環境音があっても問題ありません。むしろ環境音があるほうが良いです。
-- ウェイクワードを含まない音声も録音してください。
-- 人ごとにウェイクワードを分けても問題ありません。
+- ウェイクワードを含む音声を録音する場合、周囲の音があっても構いません。むしろ、周囲の音があった方が良いでしょう。
+- ウェイクワードを含まない音声を録音する。
+- ウェイクワードは人ごとに使用しても構いません。
 
-### 2. 長時間音声の分割
+### 2. 長い音声の分割
 
 ```bash
 python split_long_audio.py
 ```
 
-`split_long_audio.py` を実行すると、長時間録音した音声を 2 秒ごとに自動で分割します。環境音録音が何分であっても問題ありません。
+`split_long_audio.py` を実行すると、長い音声録音が2秒ごとに自動的に分割されます。環境音の録音時間は何分でも構いません。
 
-### 3. 特徴量抽出
+### 3. 特徴抽出
 
 ```bash
 python extract_features.py
 ```
 
-`extract_features.py` を実行して、音声データから特徴量を抽出し、学習用データを扱いやすい `.pkl` ファイルに変換します。
+`extract_features.py` を実行して音声データから特徴を抽出し、トレーニングデータを使いやすい `.pkl` ファイルに変換します。
 
-### 4. データセット準備
+### 4. データセットの準備
 
 ```bash
 python prepare_dataset.py
 ```
 
-`prepare_dataset.py` を実行して `.pkl` ファイルを学習用データと検証用データに分割します。
+`prepare_dataset.py` を実行して `.pkl` ファイルをトレーニングデータと検証データに分割します。
 
-> **注意**  
-> 実行時に以下のようなエラーが表示された場合は、  
+> **注意**
+> 実行時に次のエラーが表示された場合は、
 > ```text
-> ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 2 dimensions. The detected shape was (14, 40) + inhomogeneous part.
-> ```  
-> 事前に `split_long_audio.py` を実行していない可能性があります。再度実行してください。
+> ValueError: 配列要素にシーケンスを設定しています。要求された配列は、2次元後に不均一な形状になります。検出された形状は (14, 40) + 不均一な部分です。
+> ```
+> 事前に `split_long_audio.py` を実行していない可能性があります。もう一度実行してください。
 
-### 5. モデルの学習
+### 5. モデルのトレーニング
 
 ```bash
 python train_cnn.py
 ```
 
-`train_cnn.py` では軽量な CNN モデルを定義し、学習を行います。出力されるモデルファイルには日付が付加されるため、バージョン管理がしやすくなっています。
+`train_cnn.py` は軽量 CNN モデルを定義し、トレーニングします。出力モデルファイルには日付が付けられるため、バージョン管理が容易です。
+
+### 6. 推論
+
+```bash
+python predict.py --model models/wakeword_cnn_<timestamp>.pth --audio path/to/audio.wav
+```
+
+`predict.py` を実行すると、トレーニング済みモデルを使用して WAV ファイルで推論が実行され、予測ラベルと信頼度が出力されます。
 
 ## ファイル一覧
 
@@ -65,4 +73,4 @@ python train_cnn.py
 - [extract_features.py](./extract_features.py)
 - [prepare_dataset.py](./prepare_dataset.py)
 - [train_cnn.py](./train_cnn.py)
-
+- [predict.py](./predict.py)

@@ -58,6 +58,14 @@ python train_cnn.py
 
 `train_cnn.py` defines a lightweight CNN model and trains it. The output model file is date-stamped, making version control easy.
 
+### 6. Inference
+
+```bash
+python predict.py --model models/wakeword_cnn_<timestamp>.pth --audio path/to/audio.wav
+```
+
+Run `predict.py` to perform inference on a WAV file using a trained model, outputting the predicted label and confidence.
+
 ## List of files
 
 - [app.py](./app.py)
@@ -65,3 +73,5 @@ python train_cnn.py
 - [extract_features.py](./extract_features.py)
 - [prepare_dataset.py](./prepare_dataset.py)
 - [train_cnn.py](./train_cnn.py)
+- [predict.py](./predict.py)
+
