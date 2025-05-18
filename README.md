@@ -1,4 +1,4 @@
-日本語版のREADME.mdはこちら [app.py](./app.py)
+日本語版のREADME.mdはこちら [READMEJP.md](./READMEJP.md)
 # Wake word detection system
 
 This repository contains scripts for data collection, preprocessing, feature extraction, and model training for wake word detection.
