@@ -74,3 +74,18 @@ python predict.py --model models/wakeword_cnn_<timestamp>.pth --audio path/to/au
 - [prepare_dataset.py](./prepare_dataset.py)
 - [train_cnn.py](./train_cnn.py)
 - [predict.py](./predict.py)
+
+## Web UIによる学習と推論
+
+### Web UIを起動
+
+\\`\\\`\\\`bash
+python app.py
+\\\`\\\`\\\`
+
+ブラウザで http://localhost:5000 を開きます。
+
+- **モデル学習** ボタンをクリックすると、\`run.sh\` による学習が開始され、ログがリアルタイムで表示されます。
+- **推論実行** では、モデルを選択し、音声ファイルをアップロードして「推論実行」をクリックします。予測ラベルと信頼度が表示されます。
+
+

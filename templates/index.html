@@ -2,108 +2,39 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ウェイクワード録音</title>
+  <title>ウェイクワードツール</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>🎙 Wakeword 録音ツール</h1>
-
+  <h1>🎙 ウェイクワードツール</h1>
   <div id="label-buttons"></div>
-
   <form id="add-label-form">
     <input type="text" id="new-label" placeholder="新しいラベル名">
     <button type="submit">＋ラベル追加</button>
   </form>
-
   <div>
     <button id="record-btn">🔴 録音開始</button>
     <button id="stop-btn" disabled>🛑 停止して保存</button>
   </div>
-
   <p id="status"></p>
-
+  <h2>モデル学習</h2>
+  <button id="train-btn">モデル学習</button>
+  <pre id="train-status" style="background:#f0f0f0; padding:1em;"></pre>
+  <h2>推論</h2>
+  <select id="model-select">
+    <option value="">モデルを選択</option>
+    {% for m in models %}
+    <option value="{{ m }}">{{ m }}</option>
+    {% endfor %}
+  </select>
+  <input type="file" id="audio-file" accept="audio/*">
+  <button id="infer-btn">推論実行</button>
+  <p id="infer-result"></p>
   <script>
-    const currentLabel = { value: null };
-
-    function updateStatus(msg, color = "black") {
-      document.getElementById("status").textContent = msg;
-      document.getElementById("status").style.color = color;
-    }
-
-    async function fetchLabels() {
-      const res = await fetch("/");
-      const text = await res.text();
-      const parser = new DOMParser();
-      const html = parser.parseFromString(text, "text/html");
-      const buttons = html.querySelectorAll("#label-buttons button");
-      const container = document.getElementById("label-buttons");
-      container.innerHTML = "";
-      buttons.forEach(b => container.appendChild(b));
-    }
-
-    async function addLabel(name) {
-      await fetch("/add_label", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ label: name })
-      });
-      location.reload();
-    }
-
-    let mediaRecorder, audioChunks;
-
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(audioChunks, { type: "audio/wav" });
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          await fetch("/save_audio", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ label: currentLabel.value, audio: reader.result })
-          });
-          updateStatus("保存しました ✅", "green");
-        };
-        reader.readAsDataURL(blob);
-      };
-    });
-
-    document.getElementById("add-label-form").addEventListener("submit", e => {
-      e.preventDefault();
-      const name = document.getElementById("new-label").value.trim();
-      if (name) addLabel(name);
-    });
-
-    document.getElementById("record-btn").onclick = () => {
-      if (!currentLabel.value) return updateStatus("⚠ ラベルを選択してください", "red");
-      audioChunks = [];
-      mediaRecorder.start();
-      updateStatus("録音中...", "red");
-      document.getElementById("record-btn").disabled = true;
-      document.getElementById("stop-btn").disabled = false;
-    };
-
-    document.getElementById("stop-btn").onclick = () => {
-      mediaRecorder.stop();
-      document.getElementById("record-btn").disabled = false;
-      document.getElementById("stop-btn").disabled = true;
-    };
-
-    window.onload = async () => {
-      const container = document.getElementById("label-buttons");
-      const labels = {{ labels | tojson }};
-      labels.forEach(label => {
-        const btn = document.createElement("button");
-        btn.textContent = label;
-        btn.onclick = () => {
-          currentLabel.value = label;
-          updateStatus("選択中: " + label);
-        };
-        container.appendChild(btn);
-      });
-    };
+    const labels = {{ labels|tojson }};
+    const models = {{ models|tojson }};
   </script>
+  <script src="/static/script.js"></script>
 </body>
 </html>
+

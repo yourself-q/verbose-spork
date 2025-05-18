@@ -75,3 +75,18 @@ Run `predict.py` to perform inference on a WAV file using a trained model, outpu
 - [train_cnn.py](./train_cnn.py)
 - [predict.py](./predict.py)
 
+
+## Web UI Training and Inference
+
+### Start the Web UI
+
+\\`\\\`\\\`bash
+python app.py
+\\\`\\\`\\\`
+
+Open your browser at http://localhost:5000 to access the UI.
+
+- **モデル学習**: Click the "モデル学習" button to start training. Logs will stream live in the UI.
+- **推論実行**: Select a trained model and upload a WAV or WebM audio file, then click "推論実行" to perform inference. The predicted label and confidence will be displayed.
+
+
